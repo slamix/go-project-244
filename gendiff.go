@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"code/internal/formatters"
+	"code/internal/parser"
 )
 
 func BuildDiff(data1, data2 map[string]interface{}) []formatters.DiffNode {
@@ -36,10 +37,18 @@ func BuildDiff(data1, data2 map[string]interface{}) []formatters.DiffNode {
 	return nodes
 }
 
-func GenDiff(data1, data2 map[string]interface{}, format ...string) (string, error) {
+func GenDiff(file1Path, file2Path string, format ...string) (string, error) {
 	f := "stylish"
 	if len(format) > 0 && format[0] != "" {
 		f = format[0]
+	}
+	data1, err := parser.Parse(file1Path)
+	if err != nil {
+		return "", err
+	}
+	data2, err := parser.Parse(file2Path)
+	if err != nil {
+		return "", err
 	}
 	diff := BuildDiff(data1, data2)
 	return formatters.Format(diff, f)

@@ -8,7 +8,6 @@ import (
 
 	cli "github.com/urfave/cli/v3"
 	gendiff "code"
-	"code/internal/parser"
 )
 
 func main() {
@@ -30,17 +29,7 @@ func main() {
 				return fmt.Errorf("two file paths are required")
 			}
 
-			data1, err := parser.Parse(args.Get(0))
-			if err != nil {
-				return err
-			}
-
-			data2, err := parser.Parse(args.Get(1))
-			if err != nil {
-				return err
-			}
-
-			result, err := gendiff.GenDiff(data1, data2, cmd.String("format"))
+			result, err := gendiff.GenDiff(args.Get(0), args.Get(1), cmd.String("format"))
 			if err != nil {
 				return err
 			}
