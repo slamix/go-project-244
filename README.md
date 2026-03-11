@@ -22,18 +22,16 @@ Options:
 ```
 ## Examples with flat files
 ### Data type - JSON, format - stylish
-
+[![asciicast](https://asciinema.org/a/u9fB0s48oqfEoD4k.svg)](https://asciinema.org/a/u9fB0s48oqfEoD4k)
 ### Data type - YML, format - stylish 
-
+[![asciinema](https://asciinema.org/a/hPBmKWvdkJIxK7eX.svg)](https://asciinema.org/a/hPBmKWvdkJIxK7eX)
 ## Examples with nested files
 ### Data type - JSON, format - stylish
-
+[![asciinema](https://asciinema.org/a/Ya9nLF1WXEb45RVd.svg)](https://asciinema.org/a/Ya9nLF1WXEb45RVd)
 ### Data type - JSON, format - plain
-
+[![asciinema](https://asciinema.org/a/H5ETPGuXenvqljj3.svg)](https://asciinema.org/a/H5ETPGuXenvqljj3)
 ### Data type - JSON, format - json
-
+[![asciinema](https://asciinema.org/a/XW9KmjhBHYCZhugG.svg)](https://asciinema.org/a/XW9KmjhBHYCZhugG)
 ### Data type - YML, format - stylish
+[![asciinema](https://asciinema.org/a/QpM2D0JXgcDwQJHM.svg)](https://asciinema.org/a/QpM2D0JXgcDwQJHM)
 
-### Data type - YML, format - plain
-
-### Data type - YML, format - json
