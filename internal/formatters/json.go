@@ -6,18 +6,17 @@ import (
 )
 
 func FormatJSON(nodes []DiffNode) (string, error) {
-	data, err := json.MarshalIndent(toJSONNodes(nodes), "", "  ")
+	data, err := json.MarshalIndent(toJSONMap(nodes), "", "  ")
 	if err != nil {
 		return "", fmt.Errorf("failed to marshal diff to JSON: %w", err)
 	}
 	return string(data), nil
 }
 
-func toJSONNodes(nodes []DiffNode) []map[string]interface{} {
-	result := make([]map[string]interface{}, 0, len(nodes))
+func toJSONMap(nodes []DiffNode) map[string]interface{} {
+	result := make(map[string]interface{})
 	for _, n := range nodes {
 		node := map[string]interface{}{
-			"key":  n.Key,
 			"type": n.Type,
 		}
 		switch n.Type {
@@ -31,9 +30,9 @@ func toJSONNodes(nodes []DiffNode) []map[string]interface{} {
 			node["old_value"] = n.OldValue
 			node["new_value"] = n.NewValue
 		case "nested":
-			node["children"] = toJSONNodes(n.Children)
+			node["children"] = toJSONMap(n.Children)
 		}
-		result = append(result, node)
+		result[n.Key] = node
 	}
 	return result
 }
