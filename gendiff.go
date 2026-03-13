@@ -2,17 +2,19 @@ package code
 
 import (
 	"fmt"
+	"reflect"
 	"sort"
 
+	"code/internal/diff"
 	"code/internal/formatters"
 	"code/internal/parser"
 )
 
-func BuildDiff(data1, data2 map[string]interface{}) []formatters.DiffNode {
+func buildDiff(data1, data2 map[string]interface{}) []diff.DiffNode {
 	keys := collectKeys(data1, data2)
 	sort.Strings(keys)
 
-	var nodes []formatters.DiffNode
+	var nodes []diff.DiffNode
 	for _, key := range keys {
 		val1, in1 := data1[key]
 		val2, in2 := data2[key]
@@ -22,16 +24,16 @@ func BuildDiff(data1, data2 map[string]interface{}) []formatters.DiffNode {
 			m2, isMap2 := val2.(map[string]interface{})
 			switch {
 			case isMap1 && isMap2:
-				nodes = append(nodes, formatters.DiffNode{Key: key, Type: "nested", Children: BuildDiff(m1, m2)})
-			case fmt.Sprint(val1) == fmt.Sprint(val2):
-				nodes = append(nodes, formatters.DiffNode{Key: key, Type: "unchanged", Value: val1})
+				nodes = append(nodes, diff.DiffNode{Key: key, Type: diff.NodeNested, Children: buildDiff(m1, m2)})
+			case reflect.DeepEqual(val1, val2):
+				nodes = append(nodes, diff.DiffNode{Key: key, Type: diff.NodeUnchanged, Value: val1})
 			default:
-				nodes = append(nodes, formatters.DiffNode{Key: key, Type: "changed", OldValue: val1, NewValue: val2})
+				nodes = append(nodes, diff.DiffNode{Key: key, Type: diff.NodeChanged, OldValue: val1, NewValue: val2})
 			}
 		} else if in1 {
-			nodes = append(nodes, formatters.DiffNode{Key: key, Type: "removed", OldValue: val1})
+			nodes = append(nodes, diff.DiffNode{Key: key, Type: diff.NodeRemoved, OldValue: val1})
 		} else {
-			nodes = append(nodes, formatters.DiffNode{Key: key, Type: "added", NewValue: val2})
+			nodes = append(nodes, diff.DiffNode{Key: key, Type: diff.NodeAdded, NewValue: val2})
 		}
 	}
 	return nodes
@@ -44,13 +46,13 @@ func GenDiff(file1Path, file2Path string, format ...string) (string, error) {
 	}
 	data1, err := parser.Parse(file1Path)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("parsing %s: %w", file1Path, err)
 	}
 	data2, err := parser.Parse(file2Path)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("parsing %s: %w", file2Path, err)
 	}
-	diff := BuildDiff(data1, data2)
+	diff := buildDiff(data1, data2)
 	return formatters.Format(diff, f)
 }
 

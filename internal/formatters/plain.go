@@ -3,13 +3,15 @@ package formatters
 import (
 	"fmt"
 	"strings"
+
+	"code/internal/diff"
 )
 
-func FormatPlain(nodes []DiffNode) string {
+func FormatPlain(nodes []diff.DiffNode) string {
 	return formatPlainNodes(nodes, "")
 }
 
-func formatPlainNodes(nodes []DiffNode, path string) string {
+func formatPlainNodes(nodes []diff.DiffNode, path string) string {
 	var lines []string
 	for _, node := range nodes {
 		fullPath := node.Key
@@ -17,16 +19,16 @@ func formatPlainNodes(nodes []DiffNode, path string) string {
 			fullPath = path + "." + node.Key
 		}
 		switch node.Type {
-		case "nested":
+		case diff.NodeNested:
 			inner := formatPlainNodes(node.Children, fullPath)
 			if inner != "" {
 				lines = append(lines, inner)
 			}
-		case "added":
+		case diff.NodeAdded:
 			lines = append(lines, fmt.Sprintf("Property '%s' was added with value: %s", fullPath, plainValue(node.NewValue)))
-		case "removed":
+		case diff.NodeRemoved:
 			lines = append(lines, fmt.Sprintf("Property '%s' was removed", fullPath))
-		case "changed":
+		case diff.NodeChanged:
 			lines = append(lines, fmt.Sprintf("Property '%s' was updated. From %s to %s", fullPath, plainValue(node.OldValue), plainValue(node.NewValue)))
 		}
 	}

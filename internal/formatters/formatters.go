@@ -1,17 +1,12 @@
 package formatters
 
-import "fmt"
+import (
+	"fmt"
 
-type DiffNode struct {
-	Key      string
-	Type     string
-	Value    interface{}
-	OldValue interface{}
-	NewValue interface{}
-	Children []DiffNode
-}
+	"code/internal/diff"
+)
 
-func Format(nodes []DiffNode, format string) (string, error) {
+func Format(nodes []diff.DiffNode, format string) (string, error) {
 	switch format {
 	case "stylish", "":
 		return FormatStylish(nodes), nil

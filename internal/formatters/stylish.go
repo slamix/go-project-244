@@ -4,28 +4,30 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+
+	"code/internal/diff"
 )
 
-func FormatStylish(nodes []DiffNode) string {
+func FormatStylish(nodes []diff.DiffNode) string {
 	return "{\n" + renderNodes(nodes, 1) + "\n}"
 }
 
-func renderNodes(nodes []DiffNode, depth int) string {
+func renderNodes(nodes []diff.DiffNode, depth int) string {
 	pad := strings.Repeat(" ", depth*4-2)
 	var lines []string
 	for _, node := range nodes {
 		switch node.Type {
-		case "nested":
+		case diff.NodeNested:
 			lines = append(lines, fmt.Sprintf("%s  %s: {", pad, node.Key))
 			lines = append(lines, renderNodes(node.Children, depth+1))
 			lines = append(lines, strings.Repeat(" ", depth*4)+"}")
-		case "unchanged":
+		case diff.NodeUnchanged:
 			lines = append(lines, fmt.Sprintf("%s  %s: %s", pad, node.Key, renderValue(node.Value, depth)))
-		case "added":
+		case diff.NodeAdded:
 			lines = append(lines, fmt.Sprintf("%s+ %s: %s", pad, node.Key, renderValue(node.NewValue, depth)))
-		case "removed":
+		case diff.NodeRemoved:
 			lines = append(lines, fmt.Sprintf("%s- %s: %s", pad, node.Key, renderValue(node.OldValue, depth)))
-		case "changed":
+		case diff.NodeChanged:
 			lines = append(lines, fmt.Sprintf("%s- %s: %s", pad, node.Key, renderValue(node.OldValue, depth)))
 			lines = append(lines, fmt.Sprintf("%s+ %s: %s", pad, node.Key, renderValue(node.NewValue, depth)))
 		}
